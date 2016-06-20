@@ -11,7 +11,6 @@ class Sitemap extends DataExtension
         'ShowPageMetaDescription' => 'Boolean',
         'ShowPageThumbnail' => 'Boolean',
         'ShowSelf' => 'Boolean',
-        'Stylesheet' => 'Text',
     );
 
     private static $defaults = array(
@@ -33,8 +32,7 @@ class Sitemap extends DataExtension
         $fields->addFieldToTab("Root." . _t('SitemapModule.SITEMAP'), new CheckboxField("ShowPageMetaTitle", _t('SitemapModule.SHOWMETATITLE', "Show meta title")));
         $fields->addFieldToTab("Root." . _t('SitemapModule.SITEMAP'), new CheckboxField("ShowPageMetaDescription", _t('SitemapModule.SHOWMETADESCRIPTION', "Show meta description")));
         $fields->addFieldToTab("Root." . _t('SitemapModule.SITEMAP'), new CheckboxField("ShowPageThumbnail", _t('SitemapModule.SHOWPAGETHUMB', "Show page thumbnail")));
-        $fields->addFieldToTab("Root." . _t('SitemapModule.SITEMAP'), new CheckboxField("ShowSelf", _t('SitemapModule.EXCLUDEPAGE', "Show this page in sitemap")));
-        $fields->addFieldToTab("Root." . _t('SitemapModule.SITEMAP'), new TextField("Stylesheet", _t('SitemapModule.STYLESHEET', "Stylesheet")));
+        $fields->addFieldToTab("Root." . _t('SitemapModule.SITEMAP'), new CheckboxField("ShowSelf", _t('SitemapModule.SHOWSELF', "Show this page in sitemap")));
     }
 
     /**
@@ -90,10 +88,6 @@ class Sitemap extends DataExtension
     {
         $output = "";
         if (count($pages) && (($this->owner->Depth == 0) || ($depth <= $this->owner->Depth))) {
-            if (($depth == 1) && (!empty($this->owner->Stylesheet))) {
-                $output .= '<div class="' . $this->owner->Stylesheet . '">';
-            }
-
             $output .= '<ul ';
             if ($depth == 1) {
                 $output .= 'id="sitemap-list" ';
@@ -102,12 +96,12 @@ class Sitemap extends DataExtension
             foreach ($pages as $page) {
                 if ($page->owner->ShowSelf === 0) continue;
 
-                if (!($page instanceof ErrorPage) && $page->ShowInMenus && $page->canView()) {
+                if (!($page instanceof ErrorPage) && $page->canView()) {
                     if ($page->URLSegment != $this->owner->URLSegment) {
                         $data = $this->owner->prepareTemplateData($page, $depth);
                         $output .= "<li class='" . /*$page->FirstLast() . $page->MiddleString() .*/ "'>";
 
-                        $output .= $this->owner->customise($data)->renderWith(array('Sitemap_entry_' . $this->owner->Stylesheet, 'Sitemap_entry', 'Sitemap'));
+                        $output .= $this->owner->customise($data)->renderWith(array('Sitemap_entry', 'Sitemap'));
 
                         $whereStatement = "ParentID = ".$page->ID;
                         $childPages = DataObject::get("Page", $whereStatement);
@@ -117,10 +111,7 @@ class Sitemap extends DataExtension
                 }
             }
             $output .= '
-			</ul>';
-            if (($depth == 1) && (!empty($this->Stylesheet))) {
-                $output .= '</div>';
-            }
+            </ul>';
         }
         return $output;
     }
