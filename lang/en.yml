@@ -16,5 +16,5 @@ en:
       Show meta description
     SHOWPAGETHUMB:
       Show page thumbnail
-    EXCLUDEPAGE:
-      Exclude this page from sitemap
+    SHOWSELF:
+      Show this page in sitemap

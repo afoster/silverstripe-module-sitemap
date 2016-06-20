@@ -16,5 +16,5 @@ nl:
       Toon meta-omschrijving
     SHOWPAGETHUMB:
       Toon pagina thumbnail
-    EXCLUDEPAGE:
-      Verberg deze pagina in de sitemap
+    SHOWSELF:
+      Show this page in sitemap
