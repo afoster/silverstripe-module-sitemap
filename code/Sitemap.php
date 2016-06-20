@@ -33,7 +33,7 @@ class Sitemap extends DataExtension
         $fields->addFieldToTab("Root." . _t('SitemapModule.SITEMAP'), new CheckboxField("ShowPageMetaTitle", _t('SitemapModule.SHOWMETATITLE', "Show meta title")));
         $fields->addFieldToTab("Root." . _t('SitemapModule.SITEMAP'), new CheckboxField("ShowPageMetaDescription", _t('SitemapModule.SHOWMETADESCRIPTION', "Show meta description")));
         $fields->addFieldToTab("Root." . _t('SitemapModule.SITEMAP'), new CheckboxField("ShowPageThumbnail", _t('SitemapModule.SHOWPAGETHUMB', "Show page thumbnail")));
-        $fields->addFieldToTab("Root." . _t('SitemapModule.SITEMAP'), new CheckboxField("ShowSelf", _t('SitemapModule.EXCLUDEPAGE', "Exclude this page from sitemap")));
+        $fields->addFieldToTab("Root." . _t('SitemapModule.SITEMAP'), new CheckboxField("ShowSelf", _t('SitemapModule.EXCLUDEPAGE', "Show this page in sitemap")));
         $fields->addFieldToTab("Root." . _t('SitemapModule.SITEMAP'), new TextField("Stylesheet", _t('SitemapModule.STYLESHEET', "Stylesheet")));
     }
 
@@ -100,8 +100,10 @@ class Sitemap extends DataExtension
             }
             $output .= 'class="level' . $depth .'">';
             foreach ($pages as $page) {
+                if ($page->owner->ShowSelf === 0) continue;
+
                 if (!($page instanceof ErrorPage) && $page->ShowInMenus && $page->canView()) {
-                    if (($this->owner->ShowSelf == 0) || (($this->owner->ShowSelf == 1) &&  $page->URLSegment != $this->owner->URLSegment)) {
+                    if ($page->URLSegment != $this->owner->URLSegment) {
                         $data = $this->owner->prepareTemplateData($page, $depth);
                         $output .= "<li class='" . /*$page->FirstLast() . $page->MiddleString() .*/ "'>";
 
